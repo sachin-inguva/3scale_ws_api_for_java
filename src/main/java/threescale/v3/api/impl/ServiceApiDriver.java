@@ -126,8 +126,9 @@ public class ServiceApiDriver implements ServiceApi {
      */
     public ReportResponse report(String serviceToken, String serviceId, ParameterMap... transactions)
     		throws ServerError {
-        if (transactions == null || transactions.length == 0)
+        if (transactions == null || transactions.length == 0){
             throw new IllegalArgumentException("No transactions provided");
+        }
 
         ParameterMap params = new ParameterMap();
         if (this.provider_key != null) {
@@ -193,8 +194,7 @@ public class ServiceApiDriver implements ServiceApi {
     	if (this.provider_key != null) {
             params.add("provider_key", provider_key);
     	}
-
-        String urlParams = encodeAsString(params);
+        final String urlParams = encodeAsString(params);
 
         final String s = getFullHostUrl() + "/transactions/oauth_authorize.xml?" + urlParams;
 //        System.out.println("Actual: " + s);

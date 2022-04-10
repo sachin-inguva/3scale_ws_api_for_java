@@ -83,7 +83,7 @@ public class AuthorizeResponse {
 
             Element authorizedEl = root.getFirstChildElement("authorized");
             setStatus(authorizedEl.getValue());
-            if (success() == false) {
+            if (!success()) {
                 Element reasonEl = root.getFirstChildElement("reason");
                 if (reasonEl != null) {
                     setReason(reasonEl.getValue());
@@ -229,7 +229,7 @@ public class AuthorizeResponse {
     }
 
     private void setStatus(String status) {
-        if (status.toLowerCase().equals("true")) {
+        if (status.equalsIgnoreCase("true")) {
             this.status = true;
         } else {
             this.status = false;
@@ -255,9 +255,8 @@ public class AuthorizeResponse {
     private String getValueOrBlank(Element element) {
         if (element == null) {
             return "";
-        } else {
-            return element.getValue();
-        }
+        } 
+        return element.getValue();
     }
 
 

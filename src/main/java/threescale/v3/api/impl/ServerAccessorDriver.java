@@ -18,12 +18,12 @@ public class ServerAccessorDriver implements ServerAccessor {
 	private Properties props;
 	private String pluginHeaderValue;
 	private String defaultVersion = "3.1";
-    public ServerAccessorDriver() {
+    public ServerAccessorDriver() throws IOException {
 
         
     	props = new Properties();
+        InputStream in = ServerAccessorDriver.class.getClassLoader().getResourceAsStream("props.properties");
         try {
-        	InputStream in = ServerAccessorDriver.class.getClassLoader().getResourceAsStream("props.properties");
         	if (in == null) {
         		System.out.println("props.properties not found");
         	}
@@ -35,6 +35,12 @@ public class ServerAccessorDriver implements ServerAccessor {
             
         } catch (Exception e) {
         	System.out.println(e);
+        }
+        finally{
+            if (in != null) {
+                in.close();
+            }
+            
         }   	
 		pluginHeaderValue = X_3SCALE_USER_CLIENT_HEADER_JAVA_PLUGIN+defaultVersion;
 
@@ -87,13 +93,13 @@ public class ServerAccessorDriver implements ServerAccessor {
     }
 
     private String getBody(InputStream content) throws IOException {
-    	BufferedReader rd;
+    	BufferedReader reader;
         StringBuilder sb;
         String line;
-        rd = new BufferedReader(new InputStreamReader(content));
+        reader = new BufferedReader(new InputStreamReader(content));
         sb = new StringBuilder();
 
-        while ((line = rd.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             sb.append(line + '\n');
         }
         return sb.toString();
@@ -108,7 +114,6 @@ public class ServerAccessorDriver implements ServerAccessor {
      */
     public HttpResponse post(final String urlParams,final String data) throws ServerError {
         HttpURLConnection connection = null;
-        OutputStreamWriter wr;
         URL url;
 
         try {
@@ -117,6 +122,7 @@ public class ServerAccessorDriver implements ServerAccessor {
             throw new RuntimeException(ex);
         }
         try {
+            OutputStreamWriter wr;
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
